@@ -1,6 +1,6 @@
 module github.com/egdaemon/gdx
 
-go 1.26.3
+go 1.25.8
 
 require (
 	capnproto.org/go/capnp/v3 v3.1.0-alpha.2
