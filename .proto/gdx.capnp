@@ -2,7 +2,7 @@
 
 using Go = import "/go.capnp";
 $Go.package("gdx");
-$Go.import("github.com/retrovibed/gdx");
+$Go.import("github.com/egdaemon/gdx");
 
 # ProfileMode enumerates the supported runtime/pprof profile captures.
 enum ProfileMode {
