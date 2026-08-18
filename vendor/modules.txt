@@ -16,6 +16,9 @@ capnproto.org/go/capnp/v3/util/deferred
 capnproto.org/go/capnp/v3/util/maybe
 capnproto.org/go/capnp/v3/util/rc
 capnproto.org/go/capnp/v3/util/sync/mutex
+# github.com/alecthomas/kong v1.16.0
+## explicit; go 1.20
+github.com/alecthomas/kong
 # github.com/colega/zeropool v0.0.0-20230505084239-6fb4a4f75381
 ## explicit; go 1.20
 github.com/colega/zeropool
@@ -65,6 +68,8 @@ github.com/egdaemon/eg/runtime/wasi/env
 github.com/egdaemon/eg/runtime/wasi/shell
 github.com/egdaemon/eg/runtime/x/wasi/eggolang
 github.com/egdaemon/eg/runtime/x/wasi/execx
+# github.com/egdaemon/gdx v0.0.0-20260818135229-a51f90c22f91
+## explicit; go 1.26.3
 # github.com/egdaemon/wasinet/wasinet v0.0.0-20250806175613-49e153bd345a
 ## explicit; go 1.23.4
 github.com/egdaemon/wasinet/wasinet

@@ -12,6 +12,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const DefaultSocket = "gdx.socket"
+
 // NewHTTPFn builds a stdlib http.Handler exposing the diagx debug surface
 // (goroutine dumps, profiles, traces, expvar). diagx never binds a listener
 // itself: mount the returned handler however the caller likes, e.g.
