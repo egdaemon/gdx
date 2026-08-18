@@ -3,6 +3,7 @@ package gdx
 import (
 	"context"
 	"expvar"
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -37,12 +38,22 @@ func goroutinesHandler(w http.ResponseWriter, r *http.Request) {
 
 func profileHandler(cfg config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		mode := ProfileMode(mux.Vars(r)["mode"])
+		raw := mux.Vars(r)["mode"]
+		mode := ProfileModeFromString(raw)
 
 		ctx, cancel := context.WithTimeout(r.Context(), parseDuration(r, cfg.defaultDuration))
 		defer cancel()
 
 		w.Header().Set("Content-Type", "application/octet-stream")
+
+		// ProfileModeFromString returns the zero value (ProfileMode_cpu) for an
+		// unrecognized name, so round-trip it through String() to distinguish
+		// "cpu" from garbage before handing it to Profile.
+		if mode.String() != raw {
+			http.Error(w, fmt.Sprintf("unknown profile mode: %s", raw), http.StatusInternalServerError)
+			return
+		}
+
 		if _, err := io.Copy(w, Profile(ctx, mode)); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}

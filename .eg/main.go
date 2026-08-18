@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"eg/compute/diagx"
+	"eg/compute/gdx"
 
 	"github.com/egdaemon/eg/runtime/wasi/eg"
 	"github.com/egdaemon/eg/runtime/wasi/egenv"
@@ -16,13 +16,20 @@ func main() {
 	ctx, done := context.WithTimeout(context.Background(), egenv.TTL())
 	defer done()
 
-	c1 := eg.Container("eg.meta.ubuntu.24.04")
+	c1 := eg.Container("gdx.ubuntu")
 
 	err := eg.Perform(
 		ctx,
 		eggit.AutoClone,
 		eg.Build(c1.BuildFromFile(".eg/Containerfile")),
-		eg.Module(ctx, c1, diagx.GenerateSchema),
+		eg.Module(
+			ctx,
+			c1,
+			eg.Sequential(
+				gdx.Compile(),
+				gdx.Test(),
+			),
+		),
 	)
 
 	if err != nil {

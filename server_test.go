@@ -6,17 +6,17 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/retrovibed/diagx"
+	"github.com/retrovibed/gdx"
 	"github.com/stretchr/testify/require"
 )
 
-var serverTestExpvar = expvar.NewString("diagx_test_server_expvar_marker")
-
 func TestNewHTTPFn(t *testing.T) {
-	srv := httptest.NewServer(diagx.NewHTTPFn(diagx.Options().WithDefaultDuration(0)))
+	srv := httptest.NewServer(gdx.NewHTTPFn(gdx.Options().WithDefaultDuration(0)))
 	defer srv.Close()
 
 	t.Run("/debug/vars includes registered expvar.Vars", func(t *testing.T) {
+		var serverTestExpvar = expvar.NewString("diagx_test_server_expvar_marker")
+
 		serverTestExpvar.Set("hello")
 
 		resp, err := srv.Client().Get(srv.URL + "/debug/vars")

@@ -2,7 +2,15 @@ module github.com/retrovibed/gdx
 
 go 1.26.3
 
-require github.com/gorilla/mux v1.8.1
+require (
+	capnproto.org/go/capnp/v3 v3.1.0-alpha.2
+	github.com/gorilla/mux v1.8.1
+)
+
+require (
+	github.com/colega/zeropool v0.0.0-20230505084239-6fb4a4f75381 // indirect
+	golang.org/x/sync v0.20.0 // indirect
+)
 
 require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect

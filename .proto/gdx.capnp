@@ -1,8 +1,8 @@
 @0xdd5f8a3b1c2e9074;
 
 using Go = import "/go.capnp";
-$Go.package("diagxapi");
-$Go.import("github.com/retrovibed/retrovibed/diagx/diagxapi");
+$Go.package("gdx");
+$Go.import("github.com/retrovibed/gdx");
 
 # ProfileMode enumerates the supported runtime/pprof profile captures.
 enum ProfileMode {

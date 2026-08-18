@@ -1,4 +1,24 @@
 ## workspace
+# capnproto.org/go/capnp/v3 v3.1.0-alpha.2
+## explicit; go 1.19
+capnproto.org/go/capnp/v3
+capnproto.org/go/capnp/v3/encoding/text
+capnproto.org/go/capnp/v3/exc
+capnproto.org/go/capnp/v3/exp/bufferpool
+capnproto.org/go/capnp/v3/flowcontrol
+capnproto.org/go/capnp/v3/internal/nodemap
+capnproto.org/go/capnp/v3/internal/schema
+capnproto.org/go/capnp/v3/internal/str
+capnproto.org/go/capnp/v3/internal/strquote
+capnproto.org/go/capnp/v3/packed
+capnproto.org/go/capnp/v3/schemas
+capnproto.org/go/capnp/v3/util/deferred
+capnproto.org/go/capnp/v3/util/maybe
+capnproto.org/go/capnp/v3/util/rc
+capnproto.org/go/capnp/v3/util/sync/mutex
+# github.com/colega/zeropool v0.0.0-20230505084239-6fb4a4f75381
+## explicit; go 1.20
+github.com/colega/zeropool
 # github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc
 ## explicit
 github.com/davecgh/go-spew/spew
@@ -78,6 +98,9 @@ golang.org/x/net/internal/httpcommon
 golang.org/x/net/internal/httpsfv
 golang.org/x/net/internal/timeseries
 golang.org/x/net/trace
+# golang.org/x/sync v0.20.0
+## explicit; go 1.25.0
+golang.org/x/sync/semaphore
 # golang.org/x/sys v0.46.0
 ## explicit; go 1.25.0
 golang.org/x/sys/unix

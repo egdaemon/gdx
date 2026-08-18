@@ -11,29 +11,17 @@ import (
 	"github.com/retrovibed/gdx/internal/errorsx"
 )
 
-// ProfileMode selects which capture Profile runs.
-type ProfileMode string
-
-const (
-	ProfileCPU    ProfileMode = "cpu"
-	ProfileHeap   ProfileMode = "heap"
-	ProfileMem    ProfileMode = "mem"
-	ProfileAllocs ProfileMode = "allocs"
-	ProfileAlloc  ProfileMode = "alloc"
-	ProfileBlock  ProfileMode = "block"
-)
-
 // Profile dispatches to CPU/Heap/Allocs/Block by mode, returning a reader whose
 // Read will fail with an "unknown profile mode" error for any other mode.
 func Profile(ctx context.Context, mode ProfileMode) io.Reader {
 	switch mode {
-	case ProfileCPU:
+	case ProfileMode_cpu:
 		return CPU(ctx)
-	case ProfileHeap, ProfileMem:
+	case ProfileMode_heap, ProfileMode_mem:
 		return Heap(ctx)
-	case ProfileAllocs, ProfileAlloc:
+	case ProfileMode_allocs:
 		return Allocs(ctx)
-	case ProfileBlock:
+	case ProfileMode_block:
 		return Block(ctx)
 	default:
 		return pipe(func(w io.Writer) error {

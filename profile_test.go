@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/retrovibed/diagx"
+	"github.com/retrovibed/gdx"
 	"github.com/stretchr/testify/require"
 )
 
@@ -18,16 +18,16 @@ func TestProfile(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
 		defer cancel()
 
-		out, err := io.ReadAll(diagx.Profile(ctx, diagx.ProfileCPU))
+		out, err := io.ReadAll(gdx.Profile(ctx, gdx.ProfileMode_cpu))
 		require.NoError(t, err)
 		require.True(t, len(out) >= 2)
 		require.Equal(t, gzipMagic, out[:2])
 	})
 
 	t.Run("dispatches heap and mem to the same gzip-encoded heap profile", func(t *testing.T) {
-		for _, mode := range []diagx.ProfileMode{diagx.ProfileHeap, diagx.ProfileMem} {
+		for _, mode := range []gdx.ProfileMode{gdx.ProfileMode_heap, gdx.ProfileMode_mem} {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
-			out, err := io.ReadAll(diagx.Profile(ctx, mode))
+			out, err := io.ReadAll(gdx.Profile(ctx, mode))
 			cancel()
 			require.NoError(t, err)
 			require.True(t, len(out) >= 2)
@@ -35,22 +35,21 @@ func TestProfile(t *testing.T) {
 		}
 	})
 
-	t.Run("dispatches allocs and alloc to the same gzip-encoded allocs profile", func(t *testing.T) {
-		for _, mode := range []diagx.ProfileMode{diagx.ProfileAllocs, diagx.ProfileAlloc} {
-			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
-			out, err := io.ReadAll(diagx.Profile(ctx, mode))
-			cancel()
-			require.NoError(t, err)
-			require.True(t, len(out) >= 2)
-			require.Equal(t, gzipMagic, out[:2])
-		}
+	t.Run("dispatches allocs to a gzip-encoded allocs profile", func(t *testing.T) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
+		defer cancel()
+
+		out, err := io.ReadAll(gdx.Profile(ctx, gdx.ProfileMode_allocs))
+		require.NoError(t, err)
+		require.True(t, len(out) >= 2)
+		require.Equal(t, gzipMagic, out[:2])
 	})
 
 	t.Run("dispatches block to a gzip-encoded block profile", func(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
 		defer cancel()
 
-		out, err := io.ReadAll(diagx.Profile(ctx, diagx.ProfileBlock))
+		out, err := io.ReadAll(gdx.Profile(ctx, gdx.ProfileMode_block))
 		require.NoError(t, err)
 		require.True(t, len(out) >= 2)
 		require.Equal(t, gzipMagic, out[:2])
@@ -60,7 +59,7 @@ func TestProfile(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
 		defer cancel()
 
-		_, err := io.ReadAll(diagx.Profile(ctx, diagx.ProfileMode("nope")))
+		_, err := io.ReadAll(gdx.Profile(ctx, gdx.ProfileMode(99)))
 		require.ErrorContains(t, err, "unknown profile mode")
 	})
 }
@@ -70,7 +69,7 @@ func TestCPU(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
 		defer cancel()
 
-		out, err := io.ReadAll(diagx.CPU(ctx))
+		out, err := io.ReadAll(gdx.CPU(ctx))
 		require.NoError(t, err)
 		require.True(t, len(out) >= 2)
 		require.Equal(t, gzipMagic, out[:2])
@@ -80,7 +79,7 @@ func TestCPU(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
 		defer cancel()
 
-		_, err := io.ReadAll(diagx.CPU(ctx))
+		_, err := io.ReadAll(gdx.CPU(ctx))
 		require.NoError(t, err)
 
 		// if CPU had left a trace running (the genieql-lineage bug), this
@@ -95,7 +94,7 @@ func TestMemory(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
 		defer cancel()
 
-		out, err := io.ReadAll(diagx.Memory(ctx))
+		out, err := io.ReadAll(gdx.Memory(ctx))
 		require.NoError(t, err)
 		require.True(t, len(out) >= 2)
 		require.Equal(t, gzipMagic, out[:2])
@@ -107,7 +106,7 @@ func TestHeap(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
 		defer cancel()
 
-		out, err := io.ReadAll(diagx.Heap(ctx))
+		out, err := io.ReadAll(gdx.Heap(ctx))
 		require.NoError(t, err)
 		require.True(t, len(out) >= 2)
 		require.Equal(t, gzipMagic, out[:2])
@@ -119,7 +118,7 @@ func TestAllocs(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
 		defer cancel()
 
-		out, err := io.ReadAll(diagx.Allocs(ctx))
+		out, err := io.ReadAll(gdx.Allocs(ctx))
 		require.NoError(t, err)
 		require.True(t, len(out) >= 2)
 		require.Equal(t, gzipMagic, out[:2])
@@ -131,7 +130,7 @@ func TestBlock(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
 		defer cancel()
 
-		out, err := io.ReadAll(diagx.Block(ctx))
+		out, err := io.ReadAll(gdx.Block(ctx))
 		require.NoError(t, err)
 		require.True(t, len(out) >= 2)
 		require.Equal(t, gzipMagic, out[:2])
@@ -143,7 +142,7 @@ func TestTrace(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
 		defer cancel()
 
-		out, err := io.ReadAll(diagx.Trace(ctx))
+		out, err := io.ReadAll(gdx.Trace(ctx))
 		require.NoError(t, err)
 		require.True(t, len(out) >= 2)
 		require.NotEqual(t, gzipMagic, out[:2])

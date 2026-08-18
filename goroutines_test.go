@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	diagx "github.com/retrovibed/gdx"
+	"github.com/retrovibed/gdx"
 	"github.com/stretchr/testify/require"
 )
 
@@ -22,7 +22,7 @@ func (nopWriteCloser) Close() error { return nil }
 func TestDumpRoutinesInto(t *testing.T) {
 	t.Run("writes goroutine stacks and closes dst", func(t *testing.T) {
 		var buf bytes.Buffer
-		err := diagx.DumpRoutinesInto(nopWriteCloser{&buf})
+		err := gdx.DumpRoutinesInto(nopWriteCloser{&buf})
 		require.NoError(t, err)
 		require.Contains(t, buf.String(), "goroutine")
 	})
@@ -30,7 +30,7 @@ func TestDumpRoutinesInto(t *testing.T) {
 
 func TestDumpRoutines(t *testing.T) {
 	t.Run("writes to a temp file and returns its path", func(t *testing.T) {
-		path, err := diagx.DumpRoutines()
+		path, err := gdx.DumpRoutines()
 		require.NoError(t, err)
 		require.True(t, strings.HasSuffix(path, ".trace") || path == "stderr")
 	})
@@ -43,7 +43,7 @@ func TestOnSignal(t *testing.T) {
 		calls := make(chan struct{}, 1)
 		done := make(chan struct{})
 		go func() {
-			diagx.OnSignal(ctx, func(ctx context.Context) error {
+			gdx.OnSignal(ctx, func(ctx context.Context) error {
 				calls <- struct{}{}
 				return nil
 			}, syscall.SIGUSR1)
