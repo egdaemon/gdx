@@ -1,0 +1,17 @@
+FROM ubuntu:resolute
+ARG DEBIAN_FRONTEND=noninteractive
+ARG GOBIN=/usr/local/bin
+
+RUN apt-get update && apt-get -y install software-properties-common build-essential ca-certificates curl apt-transport-https sudo git dbus-user-session fuse-overlayfs podman
+RUN add-apt-repository -n ppa:longsleep/golang-backports
+RUN add-apt-repository -n ppa:egdaemon/eg
+
+RUN apt-get update && apt-get -y install golang-1.26 egworkload capnproto
+RUN ln -s /usr/lib/go-1.26/bin/go /usr/local/bin/go
+
+RUN go install capnproto.org/go/capnp/v3/capnpc-go@latest
+
+RUN which capnp
+RUN which capnpc-go
+
+CMD /usr/sbin/init
