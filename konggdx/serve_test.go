@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/alecthomas/kong"
+	"github.com/egdaemon/gdx/gdxapi"
 	"github.com/stretchr/testify/require"
 )
 
@@ -31,13 +32,7 @@ func TestServeRun(t *testing.T) {
 			done <- (Serve{}).run(ctx, l)
 		}()
 
-		client := &http.Client{
-			Transport: &http.Transport{
-				DialContext: func(ctx context.Context, _, _ string) (net.Conn, error) {
-					return (&net.Dialer{}).DialContext(ctx, "unix", path)
-				},
-			},
-		}
+		client := gdxapi.NewUnixClient(path)
 
 		var resp *http.Response
 		require.Eventually(t, func() bool {
