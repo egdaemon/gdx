@@ -1,6 +1,6 @@
 module github.com/egdaemon/gdx/konggdx
 
-go 1.26.3
+go 1.25.8
 
 require (
 	github.com/alecthomas/kong v1.16.0
