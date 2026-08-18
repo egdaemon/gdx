@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/retrovibed/gdx"
+	"github.com/egdaemon/gdx"
 	"github.com/stretchr/testify/require"
 )
 

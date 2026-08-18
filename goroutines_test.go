@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/retrovibed/gdx"
+	"github.com/egdaemon/gdx"
 	"github.com/stretchr/testify/require"
 )
 

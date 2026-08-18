@@ -8,7 +8,7 @@ import (
 	"runtime/pprof"
 	"runtime/trace"
 
-	"github.com/retrovibed/gdx/internal/errorsx"
+	"github.com/egdaemon/gdx/internal/errorsx"
 )
 
 // Profile dispatches to CPU/Heap/Allocs/Block by mode, returning a reader whose

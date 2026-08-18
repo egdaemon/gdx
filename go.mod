@@ -1,4 +1,4 @@
-module github.com/retrovibed/gdx
+module github.com/egdaemon/gdx
 
 go 1.26.3
 

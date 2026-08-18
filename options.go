@@ -3,8 +3,8 @@ package gdx
 import (
 	"time"
 
-	"github.com/retrovibed/gdx/internal/envx"
-	"github.com/retrovibed/gdx/internal/langx"
+	"github.com/egdaemon/gdx/internal/envx"
+	"github.com/egdaemon/gdx/internal/langx"
 )
 
 type config struct {
