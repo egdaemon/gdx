@@ -39,6 +39,8 @@ func AutoUnixServe(ctx context.Context, options ...option) {
 
 func UnixServe(ctx context.Context, gdxpath string, options ...option) {
 	errorsx.Log(errorsx.Wrap(errorsx.Ignore(os.Remove(gdxpath), os.ErrNotExist), "failed to remove previous gdx.socket"))
+	// best effort for ensuring directory exists. if this fails the socket will fail too.
+	errorsx.Log(errorsx.Wrap(os.MkdirAll(filepath.Dir(gdxpath), 0700), "failed to create socket directory"))
 
 	l, err := net.Listen("unix", gdxpath)
 	if err != nil {

@@ -105,4 +105,27 @@ func TestUnixServeServesHTTP(t *testing.T) {
 		_, err = os.Stat(stalePath)
 		require.True(t, os.IsNotExist(err), "socket file still exists after shutdown")
 	})
+
+	t.Run("creates parent directory if missing", func(t *testing.T) {
+		// UnixServe must ensure filepath.Dir(socket) exists so that
+		// net.Listen("unix", ...) does not fail with "no such file or directory".
+		parentDir := t.TempDir()
+		socketPath := filepath.Join(parentDir, "a", "b", "c", "d.sock")
+
+		// Verify parent dir doesn't exist before we start.
+		_, err := os.Stat(filepath.Dir(socketPath))
+		require.True(t, os.IsNotExist(err))
+
+		go gdx.UnixServe(t.Context(), socketPath)
+
+		// Server should have created the parent directory and be serving.
+		require.Eventually(t, func() bool {
+			conn, err := net.DialTimeout("unix", socketPath, 500*time.Millisecond)
+			if err != nil {
+				return false
+			}
+			conn.Close()
+			return true
+		}, 2*time.Second, 50*time.Millisecond, "server did not start after missing parent directory")
+	})
 }
