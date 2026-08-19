@@ -68,7 +68,7 @@ github.com/egdaemon/eg/runtime/wasi/env
 github.com/egdaemon/eg/runtime/wasi/shell
 github.com/egdaemon/eg/runtime/x/wasi/eggolang
 github.com/egdaemon/eg/runtime/x/wasi/execx
-# github.com/egdaemon/gdx v0.0.0-20260818135229-a51f90c22f91
+# github.com/egdaemon/gdx v0.0.0-20260818162210-df9073320007
 ## explicit; go 1.25.8
 # github.com/egdaemon/wasinet/wasinet v0.0.0-20250806175613-49e153bd345a
 ## explicit; go 1.23.4

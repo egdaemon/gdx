@@ -4,7 +4,7 @@ go 1.25.8
 
 require (
 	github.com/alecthomas/kong v1.16.0
-	github.com/egdaemon/gdx v0.0.0-20260818135229-a51f90c22f91
+	github.com/egdaemon/gdx v0.0.0-20260818162210-df9073320007
 	github.com/stretchr/testify v1.11.1
 )
 

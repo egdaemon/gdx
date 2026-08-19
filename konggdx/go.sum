@@ -10,8 +10,7 @@ github.com/colega/zeropool v0.0.0-20230505084239-6fb4a4f75381 h1:d5EKgQfRQvO97jn
 github.com/colega/zeropool v0.0.0-20230505084239-6fb4a4f75381/go.mod h1:OU76gHeRo8xrzGJU3F3I1CqX1ekM8dfJw0+wPeMwnp0=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/egdaemon/gdx v0.0.0-20260818135229-a51f90c22f91 h1:xILxwOpunk2EKBqXXFBnMoPxr/1kWxhvjId3fZYXvzM=
-github.com/egdaemon/gdx v0.0.0-20260818135229-a51f90c22f91/go.mod h1:pQKdbNtwcdgefJnXtLLNn8LknQ981rr5CHVMDFwrqMc=
+github.com/egdaemon/gdx v0.0.0-20260818162210-df9073320007 h1:LwIe6IHXsV5c2teXLhb3t/8Xd/g9fH1K6ju9jI7uFOU=
 github.com/gorilla/mux v1.8.1 h1:TuBL49tXwgrFYWhqrNgrUNEY92u81SPhu7sTdzQEiWY=
 github.com/gorilla/mux v1.8.1/go.mod h1:AKf9I4AEqPTmMytcMc0KkNouC66V3BtZ4qD5fmWSiMQ=
 github.com/hexops/gotextdiff v1.0.3 h1:gitA9+qJrrTCsiCl7+kh75nPqQt1cx4ZkudSTLoUqJM=
