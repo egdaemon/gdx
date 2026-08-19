@@ -6,13 +6,22 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
+	"github.com/egdaemon/gdx/internal/langx"
+	"github.com/egdaemon/gdx/konggdx/userx"
 	"github.com/gorilla/mux"
 )
 
 const DefaultSocket = "gdx.socket"
+
+// generates the default unix socket path to the gdx socket.
+// ${RUNTIME_DIR}/${binname}/gdx.socket
+func AutoSocket() string {
+	return userx.RuntimeDirectory(langx.FirstNonZero(os.Args...), DefaultSocket)
+}
 
 // NewHTTPFn builds a stdlib http.Handler exposing the diagx debug surface
 // (goroutine dumps, profiles, traces, expvar). diagx never binds a listener
