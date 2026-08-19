@@ -9,6 +9,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -20,14 +21,23 @@ import (
 
 const DefaultSocket = "gdx.socket"
 
-// generates the default unix socket path to the gdx socket.
-// ${RUNTIME_DIR}/${binname}/gdx.socket
+// autosocket builds the default unix socket path:
+// ${RUNTIME_DIR}/${binname}/gdx.socket.
+// binname must be a basename, not a full path (use filepath.Base).
+func autosocket(binname string) string {
+	return userx.RuntimeDirectory(filepath.Base(binname), DefaultSocket)
+}
+
+// AutoSocket returns the default unix socket path derived from os.Args[0].
 func AutoSocket() string {
-	return userx.RuntimeDirectory(langx.FirstNonZero(os.Args...), DefaultSocket)
+	return autosocket(langx.FirstNonZero(os.Args...))
 }
 
 func AutoUnixServe(ctx context.Context, options ...option) {
-	gdxpath := AutoSocket()
+	UnixServe(ctx, AutoSocket(), options...)
+}
+
+func UnixServe(ctx context.Context, gdxpath string, options ...option) {
 	errorsx.Log(errorsx.Wrap(errorsx.Ignore(os.Remove(gdxpath), os.ErrNotExist), "failed to remove previous gdx.socket"))
 
 	l, err := net.Listen("unix", gdxpath)
@@ -35,10 +45,9 @@ func AutoUnixServe(ctx context.Context, options ...option) {
 		log.Println("unable to bind gdx debug socket", err)
 		return
 	}
-	defer func() {
-		errorsx.Log(errorsx.Wrap(l.Close(), "gdx shutdown"))
-	}()
 
+	ctx, done := context.WithCancel(ctx)
+	defer done()
 	go func() {
 		<-ctx.Done()
 		errorsx.Log(errorsx.Wrap(l.Close(), "gdx shutdown"))
