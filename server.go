@@ -5,11 +5,14 @@ import (
 	"expvar"
 	"fmt"
 	"io"
+	"log"
+	"net"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
 
+	"github.com/egdaemon/gdx/internal/errorsx"
 	"github.com/egdaemon/gdx/internal/langx"
 	"github.com/egdaemon/gdx/konggdx/userx"
 	"github.com/gorilla/mux"
@@ -23,13 +26,38 @@ func AutoSocket() string {
 	return userx.RuntimeDirectory(langx.FirstNonZero(os.Args...), DefaultSocket)
 }
 
+func AutoUnixServe(ctx context.Context, options ...option) {
+	gdxpath := AutoSocket()
+	errorsx.Log(errorsx.Wrap(errorsx.Ignore(os.Remove(gdxpath), os.ErrNotExist), "failed to remove previous gdx.socket"))
+
+	l, err := net.Listen("unix", gdxpath)
+	if err != nil {
+		log.Println("unable to bind gdx debug socket", err)
+		return
+	}
+	defer func() {
+		errorsx.Log(errorsx.Wrap(l.Close(), "gdx shutdown"))
+	}()
+
+	go func() {
+		<-ctx.Done()
+		errorsx.Log(errorsx.Wrap(l.Close(), "gdx shutdown"))
+	}()
+
+	log.Println("gdx debug available at:", gdxpath)
+	if err := http.Serve(l, NewHTTPFn(options...)); langx.FirstNonNil(err, ctx.Err()) == nil {
+		log.Println("gdx debug server stopped", langx.FirstNonNil(err, ctx.Err()))
+		return
+	}
+}
+
 // NewHTTPFn builds a stdlib http.Handler exposing the diagx debug surface
 // (goroutine dumps, profiles, traces, expvar). diagx never binds a listener
 // itself: mount the returned handler however the caller likes, e.g.
 //
 //	http.Serve(net.Listen("unix", path), diagx.NewHTTPFn(diagx.Options().FromEnv()))
-func NewHTTPFn(opts options) http.Handler {
-	cfg := opts.apply()
+func NewHTTPFn(opts ...option) http.Handler {
+	cfg := options(opts).apply()
 
 	r := mux.NewRouter()
 	r.Handle("/debug/vars", expvar.Handler()).Methods(http.MethodGet)

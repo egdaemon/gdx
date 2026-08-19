@@ -11,7 +11,7 @@ import (
 )
 
 func TestNewHTTPFn(t *testing.T) {
-	srv := httptest.NewServer(gdx.NewHTTPFn(gdx.Options().WithDefaultDuration(0)))
+	srv := httptest.NewServer(gdx.NewHTTPFn(gdx.Options().WithDefaultDuration(0)...))
 	defer srv.Close()
 
 	t.Run("/debug/vars includes registered expvar.Vars", func(t *testing.T) {
