@@ -65,7 +65,10 @@ func TestTraceRun(t *testing.T) {
 			Trace Trace `cmd:""`
 		}
 
-		parser := kong.Must(&cli, kong.Vars{"vars_gdx_socket": filepath.Join(t.TempDir(), "unused.socket")})
+		parser := kong.Must(&cli, kong.Vars{
+			"vars_gdx_socket":         filepath.Join(t.TempDir(), "unused.socket"),
+			"vars_gdx_default_output": "-",
+		})
 		_, err := parser.Parse([]string{"trace", "--duration", "5s"})
 		require.NoError(t, err)
 		require.Equal(t, 5*time.Second, cli.Trace.Duration)

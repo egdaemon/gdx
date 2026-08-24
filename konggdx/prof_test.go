@@ -65,7 +65,10 @@ func TestProfRun(t *testing.T) {
 			Prof Prof `cmd:""`
 		}
 
-		parser := kong.Must(&cli, kong.Vars{"vars_gdx_socket": filepath.Join(t.TempDir(), "unused.socket")})
+		parser := kong.Must(&cli, kong.Vars{
+			"vars_gdx_socket":         filepath.Join(t.TempDir(), "unused.socket"),
+			"vars_gdx_default_output": "-",
+		})
 		_, err := parser.Parse([]string{"prof", "heap", "--duration", "5s"})
 		require.NoError(t, err)
 		require.Equal(t, "heap", cli.Prof.Mode)
@@ -77,7 +80,10 @@ func TestProfRun(t *testing.T) {
 			Prof Prof `cmd:""`
 		}
 
-		parser := kong.Must(&cli, kong.Vars{"vars_gdx_socket": filepath.Join(t.TempDir(), "unused.socket")})
+		parser := kong.Must(&cli, kong.Vars{
+			"vars_gdx_socket":         filepath.Join(t.TempDir(), "unused.socket"),
+			"vars_gdx_default_output": "-",
+		})
 		_, err := parser.Parse([]string{"prof", "bogus"})
 		require.Error(t, err)
 	})

@@ -18,7 +18,10 @@ func main() {
 	var cli konggdx.Commands
 	kctx := kong.Parse(&cli,
 		kong.Bind(ctx),
-		kong.Vars{"vars_gdx_socket": userx.RuntimeDirectory("gdx.socket")},
+		kong.Vars{
+			"vars_gdx_socket":         userx.RuntimeDirectory("gdx.socket"),
+			"vars_gdx_default_output": "-",
+		},
 	)
 	kctx.FatalIfErrorf(kctx.Run())
 }
