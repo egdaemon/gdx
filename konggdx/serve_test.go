@@ -51,6 +51,31 @@ func TestServeRun(t *testing.T) {
 		require.NoError(t, <-done)
 	})
 
+	t.Run("creates a missing socket directory", func(t *testing.T) {
+		path := filepath.Join(t.TempDir(), "missing", "nested", "test.socket")
+
+		ctx, cancel := context.WithCancel(context.Background())
+
+		done := make(chan error, 1)
+		go func() {
+			done <- (Serve{Socket: path}).Run(ctx)
+		}()
+
+		client := gdxapi.NewUnixClient(path)
+
+		require.Eventually(t, func() bool {
+			resp, err := client.Get("http://unix/debug/vars")
+			if err != nil {
+				return false
+			}
+			resp.Body.Close()
+			return resp.StatusCode == http.StatusOK
+		}, 2*time.Second, 10*time.Millisecond)
+
+		cancel()
+		require.NoError(t, <-done)
+	})
+
 	t.Run("--socket flag reaches Serve.Socket via kong", func(t *testing.T) {
 		path := filepath.Join(t.TempDir(), "flag.socket")
 
