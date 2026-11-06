@@ -6,9 +6,11 @@ import (
 	"net"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"path/filepath"
 	"testing"
 
+	"github.com/alecthomas/kong"
 	"github.com/egdaemon/gdx/gdxapi"
 	"github.com/stretchr/testify/require"
 )
@@ -56,4 +58,30 @@ func TestGoroutinesRun(t *testing.T) {
 		require.Error(t, err)
 		require.ErrorContains(t, err, "boom")
 	})
+}
+
+// Do must work over a client for any transport, the socket is only used by Run.
+func TestGoroutinesDo(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		require.Equal(t, "/debug/goroutines", r.URL.Path)
+		_, _ = w.Write([]byte("remote-dump"))
+	}))
+	defer srv.Close()
+
+	c := gdxapi.NewClient(func(ctx context.Context, _, _ string) (net.Conn, error) {
+		return (&net.Dialer{}).DialContext(ctx, "tcp", srv.Listener.Addr().String())
+	})
+
+	path := filepath.Join(t.TempDir(), "out")
+	var cli struct {
+		Goroutines Goroutines `cmd:""`
+	}
+	parser := kong.Must(&cli, kong.Vars{"vars_gdx_socket": "unused", "vars_gdx_default_output": "-"})
+	_, err := parser.Parse([]string{"goroutines", "--output", path})
+	require.NoError(t, err)
+
+	require.NoError(t, cli.Goroutines.Do(context.Background(), c))
+	raw, err := os.ReadFile(path)
+	require.NoError(t, err)
+	require.Equal(t, "remote-dump", string(raw))
 }

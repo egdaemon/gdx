@@ -6,6 +6,7 @@ import (
 	"net"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -87,4 +88,30 @@ func TestProfRun(t *testing.T) {
 		_, err := parser.Parse([]string{"prof", "bogus"})
 		require.Error(t, err)
 	})
+}
+
+func TestProfDo(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		require.Equal(t, "/debug/profile/heap", r.URL.Path)
+		require.Equal(t, "3", r.URL.Query().Get("duration"))
+		_, _ = w.Write([]byte("remote-profile"))
+	}))
+	defer srv.Close()
+
+	c := gdxapi.NewClient(func(ctx context.Context, _, _ string) (net.Conn, error) {
+		return (&net.Dialer{}).DialContext(ctx, "tcp", srv.Listener.Addr().String())
+	})
+
+	path := filepath.Join(t.TempDir(), "out")
+	var cli struct {
+		Prof Prof `cmd:""`
+	}
+	parser := kong.Must(&cli, kong.Vars{"vars_gdx_socket": "unused", "vars_gdx_default_output": "-"})
+	_, err := parser.Parse([]string{"prof", "heap", "--duration", "3s", "--output", path})
+	require.NoError(t, err)
+
+	require.NoError(t, cli.Prof.Do(context.Background(), c))
+	raw, err := os.ReadFile(path)
+	require.NoError(t, err)
+	require.Equal(t, "remote-profile", string(raw))
 }

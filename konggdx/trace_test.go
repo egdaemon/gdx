@@ -6,6 +6,7 @@ import (
 	"net"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -73,4 +74,30 @@ func TestTraceRun(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, 5*time.Second, cli.Trace.Duration)
 	})
+}
+
+func TestTraceDo(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		require.Equal(t, "/debug/trace", r.URL.Path)
+		require.Equal(t, "2", r.URL.Query().Get("duration"))
+		_, _ = w.Write([]byte("remote-trace"))
+	}))
+	defer srv.Close()
+
+	c := gdxapi.NewClient(func(ctx context.Context, _, _ string) (net.Conn, error) {
+		return (&net.Dialer{}).DialContext(ctx, "tcp", srv.Listener.Addr().String())
+	})
+
+	path := filepath.Join(t.TempDir(), "out")
+	var cli struct {
+		Trace Trace `cmd:""`
+	}
+	parser := kong.Must(&cli, kong.Vars{"vars_gdx_socket": "unused", "vars_gdx_default_output": "-"})
+	_, err := parser.Parse([]string{"trace", "--duration", "2s", "--output", path})
+	require.NoError(t, err)
+
+	require.NoError(t, cli.Trace.Do(context.Background(), c))
+	raw, err := os.ReadFile(path)
+	require.NoError(t, err)
+	require.Equal(t, "remote-trace", string(raw))
 }
