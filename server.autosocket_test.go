@@ -1,6 +1,7 @@
 package gdx
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -24,4 +25,11 @@ func TestAutosocket(t *testing.T) {
 		last := path[len(path)-len("myapp/gdx.socket"):]
 		require.Equal(t, "myapp/gdx.socket", last)
 	})
+}
+
+func TestAutosocketAlreadyScopedRuntimeDirectory(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "myapp")
+	t.Setenv("RUNTIME_DIRECTORY", dir)
+
+	require.Equal(t, filepath.Join(dir, "gdx.socket"), autosocket("/usr/bin/myapp"))
 }
